@@ -8,6 +8,7 @@ import (
 	koanfYaml "github.com/knadh/koanf/parsers/yaml"
 	koanfFile "github.com/knadh/koanf/providers/file"
 	"github.com/spf13/pflag"
+	"gopkg.in/yaml.v3"
 
 	"github.com/go-playground/validator"
 	"github.com/knadh/koanf/providers/env"
@@ -29,7 +30,10 @@ func init() {
 
 func Load(paths []string, envPrefix string, remapKey map[string]string, cfg any) error {
 	if argDumpDefaultConfig {
-		fmt.Println(cfg)
+		err := printConfig(cfg)
+		if err != nil {
+			return err
+		}
 		os.Exit(0)
 	}
 
@@ -39,7 +43,10 @@ func Load(paths []string, envPrefix string, remapKey map[string]string, cfg any)
 	}
 
 	if argDumpLoadedConfig {
-		fmt.Println(cfg)
+		err := printConfig(cfg)
+		if err != nil {
+			return err
+		}
 		os.Exit(0)
 	}
 
@@ -81,4 +88,8 @@ func loadSources(paths []string, envPrefix string, remapKey map[string]string, c
 	}), nil)
 
 	return configLoader.UnmarshalWithConf("", cfg, koanf.UnmarshalConf{Tag: "yaml"})
+}
+
+func printConfig(cfg any) error {
+	return yaml.NewEncoder(os.Stdout).Encode(cfg)
 }
