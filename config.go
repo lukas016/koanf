@@ -82,7 +82,7 @@ func loadSources(paths []string, envPrefix string, remapKey map[string]string, c
 	configLoader.Load(posflag.ProviderWithFlag(pflag.CommandLine, ".", configLoader, func(fl *pflag.Flag) (string, interface{}) {
 		newKey, ok := remapKey[fl.Name]
 		if !ok {
-			newKey = fl.Name
+			newKey = strings.ReplaceAll(fl.Name, "-", ".")
 		}
 		if fl.Changed {
 			return newKey, posflag.FlagVal(pflag.CommandLine, fl)
