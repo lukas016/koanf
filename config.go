@@ -84,7 +84,12 @@ func loadSources(paths []string, envPrefix string, remapKey map[string]string, c
 		if !ok {
 			newKey = fl.Name
 		}
-		return newKey, posflag.FlagVal(pflag.CommandLine, fl)
+		if fl.Changed {
+			return newKey, posflag.FlagVal(pflag.CommandLine, fl)
+		}
+
+		// Discard default values fro key
+		return "", nil
 	}), nil)
 
 	return configLoader.UnmarshalWithConf("", cfg, koanf.UnmarshalConf{Tag: "yaml"})
